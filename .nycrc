@@ -1,0 +1,21 @@
+{
+  "include": [
+    "src/**/*.ts"
+  ],
+  "exclude": [
+    "node_modules/",
+    "build/"
+  ],
+  "extension": [
+    ".ts"
+  ],
+  "require": [
+    "./config/test/parser"
+  ],
+  "reporter": [
+    "html",
+    "lcov"
+  ],
+  "sourceMap": true,
+  "instrument": true
+}

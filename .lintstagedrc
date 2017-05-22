@@ -1,0 +1,4 @@
+{
+  "src/**/*.ts": ["npm run lint -- --fix", "git add"],
+  "config/**/*.js": ["eslint --fix", "git add"]
+}
