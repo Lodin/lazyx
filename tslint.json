@@ -3,6 +3,7 @@
   "rules": {
     "no-any": false,
     "no-invalid-this": false,
+    "no-reserved-keywords": false,
     "no-unsafe-any": false
   }
 }
