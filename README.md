@@ -51,7 +51,7 @@ todoToggle$.get(id).next();
 ```
 `SubjectMap` signature is following:
 ```typescript
-interface ISubjectMap {
+interface SubjectMap {
   get(id: any); // get existing Subject with specified `id` or creates new one
   remove(id: any); // removes Subject with specified `id`
 }
@@ -66,7 +66,7 @@ state and sends the update to all subscribers it has.
 Here is an example of Transformer: 
 ```typescript
 import {Observable, Subject} from 'rxjs';
-import 'lazyx/add/operator/apply';
+import 'lazyx/es/add/operator/apply';
 
 export const increase$ = new Subject();
 export const decrease$ = new Subject();
@@ -84,7 +84,7 @@ If you expect that your Transformer would have dynamic initial state, just put i
 ```typescript
 import {Observable} from 'rxjs';
 import {SubjectMap} from 'lazyx';
-import 'lazyx/add/operator/apply';
+import 'lazyx/es/add/operator/apply';
 
 export const toggleTodo = new SubjectMap();
 
@@ -117,7 +117,7 @@ It can be done in the following way:
 ```typescript
 import {Observable, Subject} from 'rxjs';
 import todo from './todo'; // the function we defined in the previous example
-import 'lazyx/add/operator/mergeSequence';
+import 'lazyx/es/add/operator/mergeSequence';
 
 export const addTodo = new Subject();
 export const removeTodo = new Subject();
@@ -147,19 +147,29 @@ allows to pass them down through the React context, for example.
 
 To create a Store, you should use `createStore` function of Lazyx. It has following signatures:
 ```typescript
-function createStore<I, P, S>(initializers: I): Store<S>;
-function createStore<I, P, S>(initializers: I, preloadedState: P): Store<S>;
-function createStore<I, P, S>(initializers: I, middlewares: Middleware[]): Store<S>;
-function createStore<I, P, S>(initializers: I, preloadedState: P, middlewares: Middleware[]): Store<S>;
+function createStore(initializers: InitializersMap): Store;
+function createStore(initializers: InitializersMap, preloadedState: JSONValue): Store;
+function createStore(initializers: InitializersMap, middlewares: Middleware[]): Store;
+function createStore(initializers: InitializersMap, preloadedState: JSONValue, middlewares: Middleware[]): Store;
 ```
 Where `Store` is the following object:
 ```typescript
-interface Store<S> {
-  getState(): S;
-  add<I>(key: string, initializers: I): void;
-  merge<I>(initializers: I): void;
+interface Store {
+  getState(): any;
+  add(key: string, initializers: InitializersMap): void;
+  merge(initializers: InitializersMap): void;
 }
 ```
+`InitializersMap` is following:
+```typescript
+export type TransformerInitializer<T> = Observable<T> | ((state: T) => T);
+
+export interface InitializersMap {
+  [key: string]: InitializersMap | TransformerInitializer<any>;
+}
+```
+`JSONValue` represents a common JSON type and can be seen in [typings.d.ts](./src/typings.d.ts).
+
 **Note:** `preloadedState` should reflect transformers map but use data instead of transformers. 
 
 So, to create a store, just put your transformers to objects and send the final object to the 
