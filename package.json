@@ -1,8 +1,8 @@
 {
-  "name": "poetez-ts-lib-boilerplatre",
+  "name": "lazyx",
   "private": true,
   "version": "0.1.0",
-  "description": "Typescript library boilerplate for Poetez Project",
+  "description": "RxJS-based predictable state container for JavaScript applications",
   "main": "es/index.js",
   "scripts": {
     "clean": "rimraf commonjs es umd coverage",
@@ -25,7 +25,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/poetez/poetez-ts-lib-boilerplate.git"
+    "url": "git+https://github.com/poetez/lazyx.git"
   },
   "keywords": [
     "boilerplate",
@@ -35,9 +35,9 @@
   "author": "Vlad Rindevich <rindevich.vs@gmail.com> (https://github.com/Lodin)",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/poetez/poetez-ts-lib-boilerplate/issues"
+    "url": "https://github.com/poetez/lazyx/issues"
   },
-  "homepage": "https://github.com/poetez/poetez-ts-lib-boilerplate#readme",
+  "homepage": "https://github.com/poetez/lazyx#readme",
   "devDependencies": {
     "@types/is-plain-object": "^0.0.2",
     "@types/jasmine": "^2.5.47",
