@@ -132,9 +132,14 @@ export default todos;
 ```
 Function `mergeSequence` has the following signature:
 ```typescript
-interface MergeSequence<T, U, X> {
-  (add: Subject<T>, remove: Subject<U>, creator: (state: X) => Observable<X>): Observable<X>
-}
+type Reducer<T> = (state: T) => T;
+type TransformerCreator = (state: T) => Observable<T>;
+
+type ArrayState<T> = Observable<T>[];
+type ObjectState = {[key: string]: Observable<any>};
+
+function mergeSequence<T>(this: Observable<ArrayState<T>>, addTrigger: Subject<T>, removeTrigger: Subject<number>, create: TransformerCreator): Observable<Reducer<ArrayState<T>>>;
+function mergeSequence(this: Observable<ObjectState>, addTrigger: Subject<[string, any]>, removeTrigger: Subject<string>, create: TransformerCreator): Observable<Reducer<ObjectState>>;
 ```
 **Note:** if you use observable object, you have to send property key in the addition Trigger. 
 
