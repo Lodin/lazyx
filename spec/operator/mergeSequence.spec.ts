@@ -44,7 +44,7 @@ describe('Operator "mergeSequence"', () => {
 
     it('should add new observable element to the transformer state', (done) => {
       transformer.skip(1).subscribe((value) => {
-        expect(value.length).toEqual(1);
+        expect(value.length).toBe(1);
         expect(value[0]).toEqual(jasmine.any(Observable));
         expect(create).toHaveBeenCalledWith('test');
 
@@ -56,7 +56,7 @@ describe('Operator "mergeSequence"', () => {
 
     it('should remove observable element by index from the transformer state', (done) => {
       transformer.skip(2).subscribe((value) => {
-        expect(value.length).toEqual(0);
+        expect(value.length).toBe(0);
         done();
       });
 
@@ -81,7 +81,7 @@ describe('Operator "mergeSequence"', () => {
 
     it('should add new observable element with key to the transformer state', (done) => {
       transformer.skip(1).subscribe((value) => {
-        expect(Object.keys(value).length).toEqual(1);
+        expect(Object.keys(value).length).toBe(1);
         expect(value.test).toEqual(jasmine.any(Observable));
         expect(create).toHaveBeenCalledWith('init');
 
@@ -93,7 +93,7 @@ describe('Operator "mergeSequence"', () => {
 
     it('should remove observable element by key from the transformer state', (done) => {
       transformer.skip(2).subscribe((value) => {
-        expect(Object.keys(value).length).toEqual(0);
+        expect(Object.keys(value).length).toBe(0);
         done();
       });
 

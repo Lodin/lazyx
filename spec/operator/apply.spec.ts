@@ -21,7 +21,7 @@ describe('Operator "apply"', () => {
 
   it('should change state on every trigger', (done) => {
     transformer.skip(2).subscribe((value) => {
-      expect(value).toEqual(50);
+      expect(value).toBe(50);
       done();
     });
 
