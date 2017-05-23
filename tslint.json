@@ -2,6 +2,7 @@
   "extends": "tslint-config-poetez",
   "rules": {
     "no-any": false,
+    "no-empty-interface": false,
     "no-invalid-this": false,
     "no-reserved-keywords": false,
     "no-unsafe-any": false
