@@ -1,5 +1,5 @@
 import {Observable} from 'rxjs/Observable';
-import {mergeSequence} from '../../operator/mergeSequence';
+import mergeSequence from '../../operator/mergeSequence';
 
 Observable.prototype.mergeSequence = mergeSequence;
 

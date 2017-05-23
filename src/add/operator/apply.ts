@@ -1,5 +1,5 @@
 import {Observable} from 'rxjs/Observable';
-import {apply} from '../../operator/apply';
+import apply from '../../operator/apply';
 
 Observable.prototype.apply = apply;
 
