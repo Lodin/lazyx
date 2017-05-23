@@ -16,15 +16,15 @@ export type ObjectAddPayload = [string, any];
 export type ObjectRemovePayload = string;
 
 /* tslint:disable:max-line-length */
-export function mergeSequence<T>(this: Observable<ArrayState<T>>, addTrigger: Subject<ArrayAddPayload<T>>, removeTrigger: Subject<ArrayRemovePayload>, create: TransformerCreator<T>): Observable<Reducer<ArrayState<T>>>;
-export function mergeSequence(this: Observable<ObjectState>, addTrigger: Subject<ObjectAddPayload>, removeTrigger: Subject<ObjectRemovePayload>, create: TransformerCreator<any>): Observable<Reducer<ObjectState>>;
+export function mergeSequence<T>(this: Observable<ArrayState<T>>, addTrigger: Subject<ArrayAddPayload<T>>, removeTrigger: Subject<ArrayRemovePayload>, create: TransformerCreator): Observable<Reducer<ArrayState<T>>>;
+export function mergeSequence(this: Observable<ObjectState>, addTrigger: Subject<ObjectAddPayload>, removeTrigger: Subject<ObjectRemovePayload>, create: TransformerCreator): Observable<Reducer<ObjectState>>;
 /* tslint:enable:max-line-length */
 
 export function mergeSequence<T>(
   this: Observable<ArrayState<T> | ObjectState>,
   addTrigger: Subject<ArrayAddPayload<T> | ObjectAddPayload>,
   removeTrigger: Subject<ArrayRemovePayload | ObjectRemovePayload>,
-  create: TransformerCreator<T | any>,
+  create: TransformerCreator,
 ): Observable<Reducer<ArrayState<T>> | Reducer<ObjectState>> {
   return mergeMap.call(
     this,
@@ -49,7 +49,7 @@ function mergeArray<T>(
   this: Observable<ArrayState<T>>,
   addTrigger: Subject<ArrayAddPayload<T>>,
   removeTrigger: Subject<ArrayRemovePayload>,
-  create: TransformerCreator<T>,
+  create: TransformerCreator,
 ): Observable<Reducer<ArrayState<T>>> {
   const addMapped = map.call(
     addTrigger,
@@ -79,7 +79,7 @@ function mergeObject(
   this: Observable<ObjectState>,
   addTrigger: Subject<ObjectAddPayload>,
   removeTrigger: Subject<ObjectRemovePayload>,
-  create: TransformerCreator<any>,
+  create: TransformerCreator,
 ): Observable<Reducer<ObjectState>> {
   const addMapped = map.call(
     addTrigger,
