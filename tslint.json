@@ -1,3 +1,8 @@
 {
-  "extends": "tslint-config-poetez"
+  "extends": "tslint-config-poetez",
+  "rules": {
+    "no-any": false,
+    "no-invalid-this": false,
+    "no-unsafe-any": false
+  }
 }
