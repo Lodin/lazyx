@@ -20,15 +20,15 @@ export default function mergeSequence<T>(this: Observable<ArrayState<T>>, addTri
 export default function mergeSequence(this: Observable<ObjectState>, addTrigger: Subject<ObjectAddPayload>, removeTrigger: Subject<ObjectRemovePayload>, create: TransformerCreator): Observable<Reducer<ObjectState>>;
 /* tslint:enable:max-line-length */
 
-export default function mergeSequence<T>(
-  this: Observable<ArrayState<T> | ObjectState>,
-  addTrigger: Subject<ArrayAddPayload<T> | ObjectAddPayload>,
-  removeTrigger: Subject<ArrayRemovePayload | ObjectRemovePayload>,
+export default function mergeSequence(
+  this: any,
+  addTrigger: any,
+  removeTrigger: any,
   create: TransformerCreator,
-): Observable<Reducer<ArrayState<T>> | Reducer<ObjectState>> {
+): any {
   return mergeMap.call(
     this,
-    (state: ArrayState<T> | ObjectState) => {
+    (state: any) => {
       if (!Array.isArray(state) && !isPlainObject(state)) {
         throw new TypeError('Observable value for "mergeSequence" should be an array or a plain object');
       }

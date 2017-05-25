@@ -1,7 +1,7 @@
 import {Observable} from 'rxjs/Observable';
 import {letProto} from 'rxjs/operator/let';
 import {share} from 'rxjs/operator/share';
-import {JSONObject, JSONValue, Middleware, TransformerCreator} from './typings';
+import {JSONObject, Middleware, TransformerCreator} from './typings';
 
 export type TransformerInitializer<T> = Observable<T> | TransformerCreator;
 
@@ -17,14 +17,14 @@ export interface Store {
 
 /* tslint:disable:max-line-length unified-signatures */
 export default function createStore(initializers: InitializersMap): Store;
-export default function createStore(initializers: InitializersMap, preloadedState: JSONValue): Store;
+export default function createStore(initializers: InitializersMap, preloadedState: JSONObject): Store;
 export default function createStore(initializers: InitializersMap, middlewares: Middleware[]): Store;
-export default function createStore(initializers: InitializersMap, preloadedState: JSONValue, middlewares: Middleware[]): Store;
+export default function createStore(initializers: InitializersMap, preloadedState: JSONObject, middlewares: Middleware[]): Store;
 /* tslint:enable:max-line-length unified-signatures */
 
 export default function createStore(
-  initializers: InitializersMap,
-  preloadedState?: JSONValue | Middleware[],
+  initializers: any,
+  preloadedState?: any,
   middlewares?: Middleware[],
 ): Store {
   if (Array.isArray(preloadedState) && middlewares === undefined) {
@@ -32,17 +32,16 @@ export default function createStore(
     preloadedState = undefined;
   }
 
-  const map = initialize(initializers, <JSONValue | undefined> preloadedState, middlewares);
+  const map = initialize(initializers, preloadedState, middlewares);
 
   const getMap = () => map;
 
-  const add = (key: string, i: InitializersMap) => {
-    const state = <JSONValue | undefined> preloadedState && (<JSONObject>preloadedState)[key];
-    map[key] = initialize(i, state, middlewares);
+  const add = (key: string, i: any) => {
+    map[key] = initialize(i, preloadedState && preloadedState[key], middlewares);
   };
 
-  const merge = (i: InitializersMap) => {
-    Object.assign(map, initialize(i, <JSONValue | undefined> preloadedState, middlewares));
+  const merge = (i: any) => {
+    Object.assign(map, initialize(i, preloadedState, middlewares));
   };
 
   return {
@@ -67,19 +66,18 @@ function decorate<T, U>(transformer: Observable<T>, middlewares?: Middleware[]):
   return t;
 }
 
-function initialize(map: InitializersMap, state?: JSONValue, middlewares?: Middleware[]): any {
+function initialize(map: any, state?: any, middlewares?: Middleware[]): any {
   const result: any = {};
 
   for (const key of Object.keys(map)) {
     const value = map[key];
 
     if (typeof value === 'function') {
-      result[key] = decorate(value(state && (<JSONObject>state)[key]), middlewares);
+      result[key] = decorate(value(state && state[key]), middlewares);
     } else if (value instanceof Observable) {
       result[key] = decorate(value, middlewares);
     } else {
-      const nestedState = <JSONValue | undefined>(state && (<JSONObject>state)[key]);
-      result[key] = initialize(value, nestedState, middlewares);
+      result[key] = initialize(value, state && state[key], middlewares);
     }
   }
 
