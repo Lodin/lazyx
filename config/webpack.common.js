@@ -8,6 +8,9 @@ module.exports = {
   entry: [
     paths.index,
   ],
+  resolve: {
+    extensions: ['.js', '.json', '.ts', '.tsx'],
+  },
   output: {
     library: 'Lazyx',
     libraryTarget: 'umd',
