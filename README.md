@@ -153,9 +153,9 @@ allows to pass them down through the React context, for example.
 To create a Store, you should use `createStore` function of Lazyx. It has following signatures:
 ```typescript
 function createStore(initializers: InitializersMap): Store;
-function createStore(initializers: InitializersMap, preloadedState: JSONValue): Store;
+function createStore(initializers: InitializersMap, preloadedState: JSONObject): Store;
 function createStore(initializers: InitializersMap, middlewares: Middleware[]): Store;
-function createStore(initializers: InitializersMap, preloadedState: JSONValue, middlewares: Middleware[]): Store;
+function createStore(initializers: InitializersMap, preloadedState: JSONObject, middlewares: Middleware[]): Store;
 ```
 Where `Store` is the following object:
 ```typescript
@@ -173,7 +173,7 @@ export interface InitializersMap {
   [key: string]: InitializersMap | TransformerInitializer<any>;
 }
 ```
-`JSONValue` represents a common JSON type and can be seen in [typings.d.ts](./src/typings.d.ts).
+`JSONObject` represents a common JSON type and can be seen in [typings.d.ts](./src/typings.d.ts).
 
 **Note:** `preloadedState` should reflect transformers map but use data instead of transformers. 
 
@@ -200,15 +200,14 @@ Transformer or let is unchanged.
 In common, middleware is a function that receives a Transformer and returns it. Middleware 
 signature is following:
 ```typescript
-type Transformer<T> = Observable<T>;
-
-interface Middleware {
-  <T, U>(transformer: Transformer<T>): Transformer<U>
+export interface Middleware {
+  <T>(transformer: Observable<T>): Observable<T>;
+  <T, U>(transformer: Observable<T>): Observable<U>;
 }
 ```
 So, the simple middleware can look like following:
 ```typescript
-function loggerMiddleware<T>(transformer: Transformer<T>): Transformer<T> {
+function loggerMiddleware<T>(transformer: Observable<T>): Observable<T> {
   return transformer
     .do(({name, value}) => console.log(name, value));
 }
