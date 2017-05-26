@@ -1,7 +1,7 @@
 import {Subject} from 'rxjs/Subject';
 
-export class SubjectMap<T> {
-  private subjects = new Map<T, Subject<any>>();
+export class SubjectMap<T, U> {
+  private subjects = new Map<T, Subject<U>>();
 
   public constructor(ids?: T[]) {
     if (ids === undefined) {
@@ -13,7 +13,7 @@ export class SubjectMap<T> {
     }
   }
 
-  public get(id: T): Subject<any> {
+  public get(id: T): Subject<U> {
     if (!this.subjects.has(id)) {
       const subject = new Subject();
       this.subjects.set(id, subject);
@@ -21,7 +21,7 @@ export class SubjectMap<T> {
       return subject;
     }
 
-    return <Subject<any>>this.subjects.get(id);
+    return <Subject<U>>this.subjects.get(id);
   }
 
   public remove(id: T): boolean {

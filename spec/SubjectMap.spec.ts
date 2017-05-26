@@ -2,12 +2,12 @@ import {Subject} from 'rxjs/Subject';
 import {SubjectMap} from '../src/SubjectMap';
 
 describe('Class "SubjectMap"', () => {
-  const keys = (m: SubjectMap<string>) => Array.from((<any>m).subjects.keys());
+  const keys = (m: SubjectMap<string, string>) => Array.from((<any>m).subjects.keys());
 
-  let map: SubjectMap<string>;
+  let map: SubjectMap<string, string>;
 
   beforeEach(() => {
-    map = new SubjectMap<string>();
+    map = new SubjectMap<string, string>();
   });
 
   it('should create instance with predefined ids', () => {
