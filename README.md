@@ -160,7 +160,7 @@ function createStore(initializers: InitializersMap, preloadedState: JSONObject, 
 Where `Store` is the following object:
 ```typescript
 interface Store {
-  getState(): any;
+  getTree(): any;
   add(key: string, initializers: InitializersMap): void;
   merge(initializers: InitializersMap): void;
 }

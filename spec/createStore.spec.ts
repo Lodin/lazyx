@@ -28,17 +28,17 @@ describe('Function "createStore"', () => {
 
     expect(<any>store).toEqual({
       add: jasmine.any(Function),
-      getMap: jasmine.any(Function),
+      getTree: jasmine.any(Function),
       merge: jasmine.any(Function),
     });
   });
 
-  describe('with store "getMap" method', () => {
+  describe('with store "getTree" method', () => {
     it('should map initializers to transformers', () => {
       const store = createStore(initializers);
-      const map = store.getMap();
+      const tree = store.getTree();
 
-      expect(map).toEqual({
+      expect(tree).toEqual({
         nested1: {
           nested2: jasmine.any(Observable),
         },
@@ -79,9 +79,9 @@ describe('Function "createStore"', () => {
       const store = createStore(initializers);
       store.add('branch', branch);
 
-      const map = store.getMap();
+      const tree = store.getTree();
 
-      expect(map).toEqual({
+      expect(tree).toEqual({
         branch: {
           nested: jasmine.any(Observable),
         },
@@ -135,9 +135,9 @@ describe('Function "createStore"', () => {
       const store = createStore(initializers);
       store.merge(part);
 
-      const map = store.getMap();
+      const tree = store.getTree();
 
-      expect(map).toEqual({
+      expect(tree).toEqual({
         branch1: jasmine.any(Observable),
         nested1: {
           nested2: jasmine.any(Observable),

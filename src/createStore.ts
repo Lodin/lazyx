@@ -3,6 +3,8 @@ import {letProto} from 'rxjs/operator/let';
 import {share} from 'rxjs/operator/share';
 import {JSONObject, Middleware, TransformerCreator} from './typings';
 
+export type Tree = any;
+
 export type TransformerInitializer<T> = Observable<T> | TransformerCreator;
 
 export interface InitializersMap {
@@ -10,7 +12,7 @@ export interface InitializersMap {
 }
 
 export interface Store {
-  getMap(): any;
+  getTree(): Tree;
   add(key: string, initializers: InitializersMap): void;
   merge(initializers: InitializersMap): void;
 }
@@ -34,7 +36,7 @@ export default function createStore(
 
   const map = initialize(initializers, preloadedState, middlewares);
 
-  const getMap = () => map;
+  const getTree = () => map;
 
   const add = (key: string, i: any) => {
     map[key] = initialize(i, preloadedState && preloadedState[key], middlewares);
@@ -45,7 +47,7 @@ export default function createStore(
   };
 
   return {
-    getMap,
+    getTree,
     add,
     merge,
   };
