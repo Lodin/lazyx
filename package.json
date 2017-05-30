@@ -1,6 +1,5 @@
 {
   "name": "lazyx",
-  "private": true,
   "version": "0.1.0",
   "description": "RxJS-based predictable state container for JavaScript applications",
   "main": "es/index.js",
