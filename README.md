@@ -146,7 +146,7 @@ function mergeSequence(this: Observable<ObjectState>, addTrigger: Subject<[strin
 ### Store
 Store is a global Transformer holder. It main responsibilities are following:
 * Hold all the Transformers together in the hierarchical structure that improves accessibility and 
-allows to pass them down through the React context, for example. 
+allows to pass them down, e.g., through the React context. 
 * Provide tools to work with the dynamic initial state, e.g. if it is loaded from the server. 
 * Provide tools for adding middlewares. 
 
