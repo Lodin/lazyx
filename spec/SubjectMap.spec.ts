@@ -12,7 +12,7 @@ describe('Class "SubjectMap"', () => {
 
   it('should create instance with predefined ids', () => {
     const ids = ['test1', 'test2'];
-    const subjectMap = new SubjectMap(ids);
+    const subjectMap = new SubjectMap<string, string>(ids);
 
     expect(keys(subjectMap)).toEqual(ids);
   });

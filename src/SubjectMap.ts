@@ -9,13 +9,13 @@ export class SubjectMap<T, U> {
     }
 
     for (const id of ids) {
-      this.subjects.set(id, new Subject());
+      this.subjects.set(id, new Subject<U>());
     }
   }
 
   public get(id: T): Subject<U> {
     if (!this.subjects.has(id)) {
-      const subject = new Subject();
+      const subject = new Subject<U>();
       this.subjects.set(id, subject);
 
       return subject;
