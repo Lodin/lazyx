@@ -1,5 +1,10 @@
 # lazyx
 
+[![Latest Stable Version](https://img.shields.io/npm/v/lazyx.svg)](https://www.npmjs.com/package/lazyx)
+[![License](https://img.shields.io/npm/l/lazyx.svg)](./LICENSE)
+[![Build Status](https://img.shields.io/travis/poetez/lazyx/master.svg)](https://travis-ci.org/poetez/lazyx)
+[![Test Coverage](https://img.shields.io/codecov/c/github/poetez/lazyx/master.svg)](https://codecov.io/gh/poetez/lazyx)
+
 Lazyx is the predictable state container for JavaScript applications built on top of 
 [RxJS 5](https://github.com/ReactiveX/rxjs). It is highly inspired by 
 [Redux](https://github.com/reactjs/redux) and provides the same functional-style approach. 
