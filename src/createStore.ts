@@ -12,8 +12,8 @@ export interface InitializersMap {
 }
 
 export interface Store {
-  getTree(): Tree;
   add(key: string, initializers: InitializersMap): void;
+  getTree(): Tree;
   merge(initializers: InitializersMap): void;
 }
 
@@ -47,8 +47,8 @@ export default function createStore(
   };
 
   return {
-    getTree,
     add,
+    getTree,
     merge,
   };
 }
