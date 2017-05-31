@@ -5,7 +5,9 @@
   "main": "es/index.js",
   "scripts": {
     "clean": "rimraf commonjs es umd coverage",
-    "lint": "tslint src/**/*.ts --type-check -p tsconfig.json -t verbose",
+    "lint": "npm-run-all --parallel lint:*",
+    "lint:src": "tslint src/**/*.ts --type-check -c tslint.json -p tsconfig.json -t verbose",
+    "lint:spec": "tslint spec/**/*.ts --type-check -c tslint.json -p tsconfig.json -t verbose",
     "test": "nodemon --watch src --watch spec -e ts --exec \"yarn run test:single\"",
     "test:single": "jasmine --config=jasmine.json",
     "test:cover": "nyc yarn run test:single",
@@ -51,6 +53,7 @@
     "jasmine-spec-reporter": "^4.1.0",
     "lint-staged": "^3.4.2",
     "nodemon": "^1.11.0",
+    "npm-run-all": "^4.0.2",
     "nyc": "^10.3.2",
     "rimraf": "^2.6.1",
     "ts-node": "^3.0.4",
