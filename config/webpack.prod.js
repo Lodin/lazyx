@@ -18,7 +18,6 @@ module.exports = Object.assign({}, config, {
           mapRoot: '../umd',
           target: 'es5',
           forkChecker: true,
-          transpileOnly: true,
         },
       },
     ],
