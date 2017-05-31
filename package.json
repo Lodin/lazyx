@@ -6,8 +6,8 @@
   "scripts": {
     "clean": "rimraf commonjs es umd coverage",
     "lint": "npm-run-all --parallel lint:*",
-    "lint:src": "tslint src/**/*.ts --type-check -c tslint.json -p tsconfig.json -t verbose",
-    "lint:spec": "tslint spec/**/*.ts --type-check -c tslint.json -p tsconfig.json -t verbose",
+    "lint:src": "tslint src/**/*.ts --type-check -c tslint.json -p tsconfig.tslint.json -t verbose",
+    "lint:spec": "tslint spec/**/*.ts --type-check -c tslint.json -p tsconfig.tslint.json -t verbose",
     "test": "nodemon --watch src --watch spec -e ts --exec \"yarn run test:single\"",
     "test:single": "jasmine --config=jasmine.json",
     "test:cover": "nyc yarn run test:single",
