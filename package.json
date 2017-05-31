@@ -12,7 +12,7 @@
     "test:single": "jasmine --config=jasmine.json",
     "test:cover": "nyc yarn run test:single",
     "build:commonjs": "yarn run build:commonjs:files && yarn run build:commonjs:copydts",
-    "build:commonjs:files": "tsc --outDir --target es5 commonjs -m commonjs --mapRoot ../commonjs --declaration",
+    "build:commonjs:files": "tsc --outDir commonjs --target es5 -m commonjs --mapRoot ../commonjs --declaration",
     "build:commonjs:copydts": "cd src && copyfiles **/*.d.ts ../commonjs",
     "build:es": "yarn run build:es:files && yarn run build:es:copydts",
     "build:es:files": "tsc --outDir es --mapRoot ../es --declaration",
