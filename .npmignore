@@ -8,6 +8,7 @@
 /.editorconfig
 /.gitignore
 /.lintstagedrc
+/.npmignore
 /.nycrc
 /.travis.yml
 /jasmine.json
