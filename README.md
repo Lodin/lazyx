@@ -44,7 +44,7 @@ addTodo$.next({
   text: 'Build my first Lazyx app',
 });
 ```
-If you have an observable sequence of observables like array or object, you can use special 
+If you have an observable sequence of observables like an array or an object, you can use special 
 `SubjectMap` of Lazyx to simplify creating Trigger for sequence elements.
 ```typescript
 import {SubjectMap} from 'lazyx';
@@ -149,7 +149,7 @@ function mergeSequence(this: Observable<ObjectState>, addTrigger: Subject<[strin
 **Note:** if you use observable object, you have to send property key in the addition Trigger. 
 
 ### Store
-Store is a global Transformer holder. It main responsibilities are following:
+Store is a global Transformers holder. It main responsibilities are following:
 * Hold all the Transformers together in the hierarchical structure that improves accessibility and 
 allows to pass them down, e.g., through the React context. 
 * Provide tools to work with the dynamic initial state, e.g. if it is loaded from the server. 
