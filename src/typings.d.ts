@@ -1,5 +1,13 @@
 import {Observable} from 'rxjs/Observable';
 
+export interface Mapper<T> {
+  [key: string]: Mapper<T> | T;
+}
+
+export type Partial<T> = {
+  [K in keyof T]?: T[K];
+};
+
 export interface TransformerCreator {
   <T>(state: T): Observable<T>;
   <T, U>(state: T): Observable<U>;

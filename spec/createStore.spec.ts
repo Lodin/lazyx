@@ -1,172 +1,182 @@
+import 'rxjs/add/observable/combineLatest';
 import 'rxjs/add/observable/of';
+import 'rxjs/add/operator/do';
 import {Observable} from 'rxjs/Observable';
 import createStore from '../src/createStore';
 
+type Transformers = {
+  nested1: {
+    nested2: Observable<number>;
+  };
+  simple: Observable<number>;
+};
+
+type Branch = {
+  los1: {
+    los2: Observable<string>;
+  };
+};
+
 describe('Function "createStore"', () => {
-  let initializers: any;
+  let transformers: Transformers;
   let middleware: jasmine.Spy;
+  let middlewareHelper: jasmine.Spy;
 
   beforeEach(() => {
-    const t1 = jasmine.createSpy('createTransformer');
-    const t2 = Observable.of(5);
-
-    t1.and.returnValue(Observable.of(100));
-
-    initializers = {
+    transformers = {
       nested1: {
-        nested2: t1,
+        nested2: Observable.of(100),
       },
-      simple: t2,
+      simple: Observable.of(1),
     };
 
     middleware = jasmine.createSpy('middleware');
-    middleware.and.returnValue(Observable.of(500));
+    middlewareHelper = jasmine.createSpy('middlewareHelper');
+
+    middleware.and.callFake(<T>(t: Observable<T>) => t.do(middlewareHelper));
   });
 
   it('should create store', () => {
-    const store = createStore(initializers);
+    const store = createStore<Transformers>(transformers);
 
     expect(<any>store).toEqual({
-      add: jasmine.any(Function),
+      attach: jasmine.any(Function),
       getTree: jasmine.any(Function),
-      merge: jasmine.any(Function),
     });
   });
 
-  describe('with store "getTree" method', () => {
-    it('should map initializers to transformers', () => {
-      const store = createStore(initializers);
+  describe('using store "getTree" method', () => {
+    it('should initialize transformers', (done) => {
+      const store = createStore<Transformers>(transformers);
       const tree = store.getTree();
 
-      expect(tree).toEqual({
-        nested1: {
-          nested2: jasmine.any(Observable),
-        },
-        simple: jasmine.any(Observable),
-      });
-    });
-
-    it('should apply preloaded state for initializers', () => {
-      const preloadedState = {
-        nested1: {
-          nested2: 2000,
-        },
-      };
-
-      createStore(initializers, preloadedState);
-      expect(initializers.nested1.nested2).toHaveBeenCalledWith(2000);
-    });
-
-    it('should apply middlewares for initializers', () => {
-      createStore(initializers, [middleware]);
-      expect(middleware).toHaveBeenCalledTimes(2);
-      expect(middleware).toHaveBeenCalledWith(jasmine.any(Observable));
-    });
-  });
-
-  describe('with store "add" method', () => {
-    let branch: any;
-
-    beforeEach(() => {
-      branch = {
-        nested: jasmine.createSpy('branchNested'),
-      };
-
-      branch.nested.and.returnValue(Observable.of(30));
-    });
-
-    it('should add new transformer branch to the store', () => {
-      const store = createStore(initializers);
-      store.add('branch', branch);
-
-      const tree = store.getTree();
-
-      expect(tree).toEqual({
-        branch: {
-          nested: jasmine.any(Observable),
-        },
+      expect(<any>tree).toEqual({
         nested1: {
           nested2: jasmine.any(Observable),
         },
         simple: jasmine.any(Observable),
       });
 
-      expect(branch.nested).toHaveBeenCalledWith(undefined);
+      Observable.combineLatest(tree.nested1.nested2, tree.simple)
+        .subscribe(([first, second]: [number, number]) => {
+          expect(first).toBe(100);
+          expect(second).toBe(1);
+          done();
+        });
     });
 
-    it('should apply preloadedState to newly added transformer branch', () => {
-      const preloadedState = {
-        branch: {
-          nested: 1000,
-        },
+    it('should initialize transformers with initial state', (done) => {
+      const initialState = {
         nested1: {
           nested2: 5000,
         },
+        simple: 1000,
       };
 
-      const store = createStore(initializers, preloadedState);
-      expect(initializers.nested1.nested2).toHaveBeenCalledWith(5000);
+      const tree = createStore<Transformers>(transformers, initialState).getTree();
 
-      store.add('branch', branch);
-      expect(branch.nested).toHaveBeenCalledWith(1000);
-      expect(branch.nested).toHaveBeenCalledTimes(1);
+      Observable.combineLatest(tree.nested1.nested2, tree.simple)
+        .subscribe(([first, second]: [number, number]) => {
+          expect(first).toBe(5000);
+          expect(second).toBe(1000);
+          done();
+        });
     });
 
-    it('should apply middleware for newly added transformer branch', () => {
-      const store = createStore(initializers, [middleware]);
-      store.add('branch', branch);
+    it('should initialize transformers with middlewares', () => {
+      createStore<Transformers>(transformers, [middleware]);
 
-      expect(middleware).toHaveBeenCalledTimes(3);
+      expect(middleware).toHaveBeenCalledTimes(2);
+      expect(middleware).toHaveBeenCalledWith(jasmine.any(Observable));
+    });
+
+    it('should send transformer path to the middleware', (done) => {
+      const tree = createStore<Transformers>(transformers, [middleware]).getTree();
+
+      Observable.combineLatest(tree.nested1.nested2, tree.simple)
+        .subscribe(() => {
+          expect(middlewareHelper).toHaveBeenCalledTimes(2);
+          expect(middlewareHelper).toHaveBeenCalledWith({
+            name: 'store.nested1.nested2',
+            value: 100,
+          });
+          expect(middlewareHelper).toHaveBeenCalledWith({
+            name: 'store.simple',
+            value: 1,
+          });
+
+          done();
+        });
     });
   });
 
-  describe('with store "merge" method', () => {
-    let part: any;
+  describe('using store "attach" method', () => {
+    let branch: Branch;
 
     beforeEach(() => {
-      part = {
-        branch1: jasmine.createSpy('partNested'),
+      branch = {
+        los1: {
+          los2: Observable.of('test'),
+        },
       };
-
-      part.branch1.and.returnValue(Observable.of(325));
     });
 
-    it('should merge new store part into the store', () => {
-      const store = createStore(initializers);
-      store.merge(part);
+    it('should add new branch to store', (done) => {
+      const store = createStore<Transformers & Branch>(transformers);
+      store.attach(branch);
 
       const tree = store.getTree();
 
-      expect(tree).toEqual({
-        branch1: jasmine.any(Observable),
+      expect(<any>tree).toEqual({
+        los1: {
+          los2: jasmine.any(Observable),
+        },
         nested1: {
           nested2: jasmine.any(Observable),
         },
         simple: jasmine.any(Observable),
       });
 
-      expect(part.branch1).toHaveBeenCalledWith(undefined);
+      Observable.combineLatest(tree.nested1.nested2, tree.simple, tree.los1.los2)
+        .subscribe(([first, second, third]: [number, number, string]) => {
+          expect(first).toBe(100);
+          expect(second).toBe(1);
+          expect(third).toBe('test');
+          done();
+        });
     });
 
-    it('should apply preloadedState to newly merged part', () => {
-      const preloadedState = {
-        branch1: 999,
-        nested1: {
-          nested2: 888,
+    it('should apply initialState to the new branch', (done) => {
+      const initialState = {
+        los1: {
+          los2: 'anotherTest',
         },
+        nested1: {
+          nested2: 1000,
+        },
+        simple: 2000,
       };
 
-      const store = createStore(initializers, preloadedState);
-      expect(initializers.nested1.nested2).toHaveBeenCalledWith(888);
+      const store = createStore<Transformers & Branch>(transformers, initialState);
+      store.attach(branch);
 
-      store.merge(part);
-      expect(part.branch1).toHaveBeenCalledWith(999);
-      expect(part.branch1).toHaveBeenCalledTimes(1);
+      const tree = store.getTree();
+
+      Observable.combineLatest(tree.nested1.nested2, tree.simple, tree.los1.los2)
+        .subscribe(([first, second, third]: [number, number, string]) => {
+          expect(first).toBe(1000);
+          expect(second).toBe(2000);
+          expect(third).toBe('anotherTest');
+          done();
+        });
     });
 
-    it('should apply middleware to newly merged part', () => {
-      const store = createStore(initializers, [middleware]);
-      store.merge(part);
+    it('should apply middlewares to the new branch', () => {
+      const store = createStore<Transformers & Branch>(transformers, [middleware]);
+
+      expect(middleware).toHaveBeenCalledTimes(2);
+
+      store.attach(branch);
 
       expect(middleware).toHaveBeenCalledTimes(3);
     });
