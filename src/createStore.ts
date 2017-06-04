@@ -1,66 +1,56 @@
 import {Observable} from 'rxjs/Observable';
 import {letProto} from 'rxjs/operator/let';
+import {map} from 'rxjs/operator/map';
 import {share} from 'rxjs/operator/share';
-import {JSONObject, Middleware, TransformerCreator} from './typings';
+import {JSONObject, Mapper, Middleware, TransformerCreator} from './typings';
 
-export type Tree = any;
+export type TransformersMap = Mapper<TransformerCreator | Observable<any>>;
+export type Tree = Mapper<Observable<any>>;
 
-export type TransformerInitializer<T> = Observable<T> | TransformerCreator;
-
-export interface InitializersMap {
-  [key: string]: InitializersMap | TransformerInitializer<any>;
-}
-
-export interface Store {
-  add(key: string, initializers: InitializersMap): void;
-  getTree(): Tree;
-  merge(initializers: InitializersMap): void;
+export interface Store<T> {
+  attach(transformers: TransformersMap): void;
+  getTree(): T;
 }
 
 /* tslint:disable:max-line-length unified-signatures */
-export default function createStore(initializers: InitializersMap): Store;
-export default function createStore(initializers: InitializersMap, preloadedState: JSONObject): Store;
-export default function createStore(initializers: InitializersMap, middlewares: Middleware[]): Store;
-export default function createStore(initializers: InitializersMap, preloadedState: JSONObject, middlewares: Middleware[]): Store;
+export default function createStore<T extends Tree>(transformers: TransformersMap): Store<T>;
+export default function createStore<T extends Tree>(transformers: TransformersMap, initialState: JSONObject): Store<T>;
+export default function createStore<T extends Tree>(transformers: TransformersMap, middlewares: Middleware[]): Store<T>;
+export default function createStore<T extends Tree>(transformers: TransformersMap, initialState: JSONObject, middlewares: Middleware[]): Store<T>;
 /* tslint:enable:max-line-length unified-signatures */
 
-export default function createStore(
-  initializers: any,
-  preloadedState?: any,
-  middlewares?: Middleware[],
-): Store {
-  if (Array.isArray(preloadedState) && middlewares === undefined) {
-    middlewares = <Middleware[]>preloadedState;
-    preloadedState = undefined;
+export default function createStore(transformers: any, initialState?: any, middlewares?: any): any {
+  if (Array.isArray(initialState) && middlewares === undefined) {
+    middlewares = initialState;
+    initialState = undefined;
   }
 
-  const map = initialize(initializers, preloadedState, middlewares);
+  const tree = initialize(transformers, initialState, middlewares);
 
-  const getTree = () => map;
+  const getTree = () => tree;
 
-  const add = (key: string, i: any) => {
-    map[key] = initialize(i, preloadedState && preloadedState[key], middlewares);
-  };
-
-  const merge = (i: any) => {
-    Object.assign(map, initialize(i, preloadedState, middlewares));
+  const attach = (branch: any) => {
+    Object.assign(tree, initialize(branch, initialState, middlewares));
   };
 
   return {
-    add,
+    attach,
     getTree,
-    merge,
   };
 }
 
-function decorate<T, U>(transformer: Observable<T>, middlewares?: Middleware[]): Observable<U> {
+function decorate<T, U>(
+  transformer: Observable<T>,
+  middlewares: Middleware[] | undefined,
+  path: string | null,
+): Observable<U> {
   const shared = share.call(transformer);
 
-  if (middlewares === undefined) {
+  if (!middlewares) {
     return shared;
   }
 
-  let t = shared;
+  let t = map.call(shared, (value: T) => ({name: path, value}));
   for (const middleware of middlewares) {
     t = letProto.call(t, middleware);
   }
@@ -68,18 +58,19 @@ function decorate<T, U>(transformer: Observable<T>, middlewares?: Middleware[]):
   return t;
 }
 
-function initialize(map: any, state?: any, middlewares?: Middleware[]): any {
+function initialize(transformers: any, initialState?: any, middlewares?: Middleware[], path: string | null = 'store'): any {
   const result: any = {};
 
-  for (const key of Object.keys(map)) {
-    const value = map[key];
+  for (const key of Object.keys(transformers)) {
+    const value = transformers[key];
+    const p = middlewares ? `${path}.${key}` : null;
 
     if (typeof value === 'function') {
-      result[key] = decorate(value(state && state[key]), middlewares);
+      result[key] = decorate(value(initialState && initialState[key]), middlewares, p);
     } else if (value instanceof Observable) {
-      result[key] = decorate(value, middlewares);
+      result[key] = decorate(value, middlewares, p);
     } else {
-      result[key] = initialize(value, state && state[key], middlewares);
+      result[key] = initialize(value, initialState && initialState[key], middlewares, p);
     }
   }
 
