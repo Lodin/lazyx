@@ -3,6 +3,7 @@
   "version": "0.1.0",
   "description": "RxJS-based predictable state container for JavaScript applications",
   "main": "es/index.js",
+  "types": "es/index.d.ts",
   "scripts": {
     "clean": "rimraf commonjs es umd coverage",
     "lint": "npm-run-all --parallel lint:*",
