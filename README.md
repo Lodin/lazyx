@@ -113,7 +113,13 @@ function todo(state = initialState()) {
 
 export default todo;
 ```
-We will call this functions `TransformerCreator`.
+We will call these functions `TransformerCreator`. They have following signature: 
+```typescript
+export interface TransformerCreator {
+  <T>(state: T): Observable<T>;
+  <T, U>(state: T): Observable<U>;
+}
+```
 
 If you have an observable sequence to create, use special function `mergeSequence` provided by 
 Lazyx.
@@ -155,32 +161,34 @@ allows to pass them down, e.g., through the React context.
 * Provide tools to work with the dynamic initial state, e.g. if it is loaded from the server. 
 * Provide tools for adding middlewares. 
 
-To create a Store, you should use `createStore` function of Lazyx. It has following signatures:
+To create a store you should use `createStore` function of Lazyx. It has following signature:
 ```typescript
-function createStore(initializers: InitializersMap): Store;
-function createStore(initializers: InitializersMap, preloadedState: JSONObject): Store;
-function createStore(initializers: InitializersMap, middlewares: Middleware[]): Store;
-function createStore(initializers: InitializersMap, preloadedState: JSONObject, middlewares: Middleware[]): Store;
+function createStore<T extends Tree>(transformers: TransformersMap): Store<T>;
+function createStore<T extends Tree>(transformers: TransformersMap, initialState: JSONObject): Store<T>;
+function createStore<T extends Tree>(transformers: TransformersMap, middlewares: Middleware[]): Store<T>;
+function createStore<T extends Tree>(transformers: TransformersMap, initialState: JSONObject, middlewares: Middleware[]): Store<T>;
 ```
-Where `Store` is the following object:
+Where: 
 ```typescript
-interface Store {
-  getTree(): any;
-  add(key: string, initializers: InitializersMap): void;
-  merge(initializers: InitializersMap): void;
+interface TransformersMap {
+  [key: string]: TransformersMap | TransformerCreator | Observable<any>
+}
+
+interface Tree {
+  [key: string]: Tree | Observable<any>
 }
 ```
-`InitializersMap` is following:
-```typescript
-export type TransformerInitializer<T> = Observable<T> | ((state: T) => T);
+`JSONObject` represents standard JSON object, you can see its signature in [typings.d.ts](./src/typings.d.ts).
 
-export interface InitializersMap {
-  [key: string]: InitializersMap | TransformerInitializer<any>;
+Store has following signature:
+```typescript
+export interface Store<T> {
+  attach(transformers: TransformersMap): void;
+  getTree(): T;
 }
 ```
-`JSONObject` represents a common JSON type and can be seen in [typings.d.ts](./src/typings.d.ts).
 
-**Note:** `preloadedState` should reflect transformers map but use data instead of transformers. 
+**Note:** `initialState` should reflect transformers map but use data instead of transformers.
 
 So, to create a store, just put your transformers to objects and send the final object to the 
 `createStore` function. 
@@ -193,6 +201,44 @@ const store = createStore({
 });
 
 export default store;
+```
+Unfortunately, there is no built-in support for `Tree` object returning by `getTree` method due to Typescript restrictions 
+([issue](https://github.com/Microsoft/TypeScript/issues/12424)). If you want, you can set it manually: 
+```typescript
+type Transformers<T = Observable<number>> = { // if you have many different observable, you define more letters or just use `Observable<any>`
+  nested1: {
+    nested2: T
+  }
+}
+
+type NewBranch<T = Observable<any>> = {
+  newNested: T
+}
+
+const transformers: Transformers<TransformerCreator> = {
+  nested1: {
+    nested2: (state = 100) => Observable.of(state)
+  }
+}
+
+const newBranch: NewBranch<TransformerCreator> = {
+  newNested: (state = 'test') => Observable.of(state)
+}
+
+const initialState = {
+  nested1: {
+    nested2: 10000
+  },
+  newNested: 'newTest'
+}
+
+const store = createStore<Transformers & Branch>(transformers, initialState);
+
+console.log(store.getTree().nested1.nested2); // here is the full type support from Transformers type
+
+store.attach(newBranch);
+
+console.log(stote.getTree().newNested); // it works too. Be careful, it will be undefined if you didn't attach the newBranch
 ```
 
 ## Advanced
@@ -218,7 +264,14 @@ function loggerMiddleware<T>(transformer: Observable<T>): Observable<T> {
 }
 ```
 As a `name` will be used the whole path to current Transformer in the Transformers map divided by 
-period.
+period with `store` in the beginning. E.g. `"store.nested1.nested2"` for 
+```typescript
+const transformers = {
+  nested1: {
+    nested2: Observable.of(1)
+  }
+}
+```
 
 ### Ajax
 How can you create an ajax-request using Lazyx? You can use the `ajax` method of RxJS and combine it
