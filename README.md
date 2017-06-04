@@ -127,8 +127,8 @@ Lazyx.
 It can be done in the following way:
 ```typescript
 import {Observable, Subject} from 'rxjs';
-import todo from './todo'; // the function we defined in the previous example
 import 'lazyx/es/add/operator/mergeSequence';
+import todo from './todo'; // the function we defined in the previous example
 
 export const addTodo = new Subject();
 export const removeTodo = new Subject();
