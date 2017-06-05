@@ -1,6 +1,7 @@
 {
   "extends": "tslint-config-poetez",
   "rules": {
+    "one-variable-per-declaration": [true, "ignore-for-loop"],
     "no-any": false,
     "no-empty-interface": false,
     "no-invalid-this": false,
