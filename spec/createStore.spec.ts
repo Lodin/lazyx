@@ -3,23 +3,9 @@ import 'rxjs/add/observable/of';
 import 'rxjs/add/operator/do';
 import {Observable} from 'rxjs/Observable';
 import createStore from '../src/createStore';
-import {TransformerCreator} from '../src/typings';
-
-type Transformers<T = Observable<number>> = {
-  nested1: {
-    nested2: T;
-  };
-  simple: Observable<number>;
-};
-
-type Branch<T = Observable<string>> = {
-  los1: {
-    los2: T;
-  };
-};
 
 describe('Function "createStore"', () => {
-  let transformers: Transformers<TransformerCreator>;
+  let transformers: any;
   let middleware: jasmine.Spy;
   let middlewareHelper: jasmine.Spy;
 
@@ -38,7 +24,7 @@ describe('Function "createStore"', () => {
   });
 
   it('should create store', () => {
-    const store = createStore<Transformers>(transformers);
+    const store = createStore(transformers);
 
     expect(<any>store).toEqual({
       attach: jasmine.any(Function),
@@ -48,7 +34,7 @@ describe('Function "createStore"', () => {
 
   describe('using store "getTree" method', () => {
     it('should initialize transformers', (done) => {
-      const store = createStore<Transformers>(transformers);
+      const store = createStore(transformers);
       const tree = store.getTree();
 
       expect(<any>tree).toEqual({
@@ -74,7 +60,7 @@ describe('Function "createStore"', () => {
         simple: 1000,
       };
 
-      const tree = createStore<Transformers>(transformers, initialState).getTree();
+      const tree = createStore(transformers, initialState).getTree();
 
       Observable.combineLatest(tree.nested1.nested2, tree.simple)
         .subscribe(([first, second]: [number, number]) => {
@@ -85,14 +71,14 @@ describe('Function "createStore"', () => {
     });
 
     it('should initialize transformers with middlewares', () => {
-      createStore<Transformers>(transformers, [middleware]);
+      createStore(transformers, [middleware]);
 
       expect(middleware).toHaveBeenCalledTimes(2);
       expect(middleware).toHaveBeenCalledWith(jasmine.any(Observable));
     });
 
     it('should send transformer path to the middleware', (done) => {
-      const tree = createStore<Transformers>(transformers, [middleware]).getTree();
+      const tree = createStore(transformers, [middleware]).getTree();
 
       Observable.combineLatest(tree.nested1.nested2, tree.simple)
         .subscribe(() => {
@@ -112,7 +98,7 @@ describe('Function "createStore"', () => {
   });
 
   describe('using store "attach" method', () => {
-    let branch: Branch<TransformerCreator>;
+    let branch: any;
 
     beforeEach(() => {
       branch = {
@@ -123,7 +109,7 @@ describe('Function "createStore"', () => {
     });
 
     it('should add new branch to store', (done) => {
-      const store = createStore<Transformers & Branch>(transformers);
+      const store = createStore(transformers);
       store.attach(branch);
 
       const tree = store.getTree();
@@ -158,7 +144,7 @@ describe('Function "createStore"', () => {
         simple: 2000,
       };
 
-      const store = createStore<Transformers & Branch>(transformers, initialState);
+      const store = createStore(transformers, initialState);
       store.attach(branch);
 
       const tree = store.getTree();
@@ -173,7 +159,7 @@ describe('Function "createStore"', () => {
     });
 
     it('should apply middlewares to the new branch', () => {
-      const store = createStore<Transformers & Branch>(transformers, [middleware]);
+      const store = createStore(transformers, [middleware]);
 
       expect(middleware).toHaveBeenCalledTimes(2);
 

@@ -5,18 +5,17 @@ import {share} from 'rxjs/operator/share';
 import {JSONObject, Mapper, Middleware, TransformerCreator} from './typings';
 
 export type TransformersMap = Mapper<TransformerCreator | Observable<any>>;
-export type Tree = Mapper<Observable<any>>;
 
-export interface Store<T> {
+export interface Store {
   attach(transformers: TransformersMap): void;
-  getTree(): T;
+  getTree(): any;
 }
 
 /* tslint:disable:max-line-length unified-signatures */
-export default function createStore<T extends Tree>(transformers: TransformersMap): Store<T>;
-export default function createStore<T extends Tree>(transformers: TransformersMap, initialState: JSONObject): Store<T>;
-export default function createStore<T extends Tree>(transformers: TransformersMap, middlewares: Middleware[]): Store<T>;
-export default function createStore<T extends Tree>(transformers: TransformersMap, initialState: JSONObject, middlewares: Middleware[]): Store<T>;
+export default function createStore(transformers: TransformersMap): Store;
+export default function createStore(transformers: TransformersMap, initialState: JSONObject): Store;
+export default function createStore(transformers: TransformersMap, middlewares: Middleware[]): Store;
+export default function createStore(transformers: TransformersMap, initialState: JSONObject, middlewares: Middleware[]): Store;
 /* tslint:enable:max-line-length unified-signatures */
 
 export default function createStore(transformers: any, initialState?: any, middlewares?: any): any {

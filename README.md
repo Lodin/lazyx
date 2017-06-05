@@ -163,28 +163,24 @@ allows to pass them down, e.g., through the React context.
 
 To create a store you should use `createStore` function of Lazyx. It has following signature:
 ```typescript
-function createStore<T extends Tree>(transformers: TransformersMap): Store<T>;
-function createStore<T extends Tree>(transformers: TransformersMap, initialState: JSONObject): Store<T>;
-function createStore<T extends Tree>(transformers: TransformersMap, middlewares: Middleware[]): Store<T>;
-function createStore<T extends Tree>(transformers: TransformersMap, initialState: JSONObject, middlewares: Middleware[]): Store<T>;
+function createStore(transformers: TransformersMap): Store;
+function createStore(transformers: TransformersMap, initialState: JSONObject): Store;
+function createStore(transformers: TransformersMap, middlewares: Middleware[]): Store;
+function createStore(transformers: TransformersMap, initialState: JSONObject, middlewares: Middleware[]): Store;
 ```
 Where: 
 ```typescript
 interface TransformersMap {
   [key: string]: TransformersMap | TransformerCreator | Observable<any>
 }
-
-interface Tree {
-  [key: string]: Tree | Observable<any>
-}
 ```
 `JSONObject` represents standard JSON object, you can see its signature in [typings.d.ts](./src/typings.d.ts).
 
 Store has following signature:
 ```typescript
-export interface Store<T> {
+export interface Store {
   attach(transformers: TransformersMap): void;
-  getTree(): T;
+  getTree(): any;
 }
 ```
 
@@ -202,44 +198,8 @@ const store = createStore({
 
 export default store;
 ```
-Unfortunately, there is no built-in support for `Tree` object returning by `getTree` method due to Typescript restrictions 
-([issue](https://github.com/Microsoft/TypeScript/issues/12424)). If you want, you can set it manually: 
-```typescript
-type Transformers<T = Observable<number>> = { // if you have many different observable, you define more letters or just use `Observable<any>`
-  nested1: {
-    nested2: T
-  }
-}
-
-type NewBranch<T = Observable<any>> = {
-  newNested: T
-}
-
-const transformers: Transformers<TransformerCreator> = {
-  nested1: {
-    nested2: (state = 100) => Observable.of(state)
-  }
-}
-
-const newBranch: NewBranch<TransformerCreator> = {
-  newNested: (state = 'test') => Observable.of(state)
-}
-
-const initialState = {
-  nested1: {
-    nested2: 10000
-  },
-  newNested: 'newTest'
-}
-
-const store = createStore<Transformers & Branch>(transformers, initialState);
-
-console.log(store.getTree().nested1.nested2); // here is the full type support from Transformers type
-
-store.attach(newBranch);
-
-console.log(stote.getTree().newNested); // it works too. Be careful, it will be undefined if you didn't attach the newBranch
-```
+Unfortunately, there are no typings for object returning by `getTree` method due to Typescript restrictions 
+([issue](https://github.com/Microsoft/TypeScript/issues/12424)). When this issue is solved, these typings will be added. 
 
 ## Advanced
 ### Middleware
