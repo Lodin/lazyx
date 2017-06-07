@@ -223,7 +223,7 @@ function loggerMiddleware<T>(transformer: Observable<T>): Observable<T> {
     .do(({name, value}) => console.log(name, value));
 }
 ```
-As a `name` will be used the whole path to current Transformer in the Transformers map divided by 
+Parameter `name` is the whole path to current Transformer in the Transformers map divided by 
 period with `store` in the beginning. E.g. `"store.nested1.nested2"` for 
 ```typescript
 const transformers = {
