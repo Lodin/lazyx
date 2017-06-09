@@ -65,7 +65,7 @@ interface SubjectMap {
 Subject belongs to. 
 
 ### Transformer
-Transformer is the main part of Lazyx. It receives signals from number of Triggers, changes inner 
+Transformer is the main part of Lazyx. It receives signals from a number of Triggers, changes inner 
 state and sends the update to all subscribers it has. 
 
 Here is an example of Transformer: 
@@ -198,7 +198,7 @@ const store = createStore({
 
 export default store;
 ```
-Unfortunately, there are no typings for object returning by `getTree` method due to Typescript restrictions 
+Unfortunately, there are no typings for object returning by `getTree` method due to current Typescript restrictions 
 ([issue](https://github.com/Microsoft/TypeScript/issues/12424)). When this issue is solved, these typings will be added. 
 
 ## Advanced
@@ -265,12 +265,15 @@ calls Subject's `next` method with predefined objects. For example:
 import {Subject} from 'rxjs';
 
 class AddTodo extends Subject {
-  run(text: string): void {
-    this.next({ text });
+  next(text: string): void {
+    super.next({ text });
   }
 }
 
 const addTodo$ = new AddTodo();
 
-addTodo$.run('Build my first Lazyx app');
+addTodo$.next('Build my first Lazyx app');
 ```
+
+## License
+[MIT](./LICENSE)
