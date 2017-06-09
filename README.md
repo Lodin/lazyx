@@ -12,6 +12,8 @@ Lazyx is the predictable state container for JavaScript applications built on to
 In fact, Lazyx is just a thin layer on top of RxJS. It provides a system to use RxJS more effective 
 and simplifies some regular actions. 
 
+**Note**: It is an alpha release. API might change any time. Don't use in the production. 
+
 ## Install
 ```bash
 $ npm install --save lazyx
