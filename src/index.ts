@@ -1,5 +1,5 @@
 import './add/operator/apply';
-import './add/operator/mergeSequence';
+import './add/operator/mergeCollection';
 
 export {Store} from './createStore';
 export {default as createStore} from './createStore';

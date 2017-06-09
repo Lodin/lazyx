@@ -18,11 +18,11 @@ export type ObjectAddPayload = [string, any];
 export type ObjectRemovePayload = string;
 
 /* tslint:disable:max-line-length */
-export default function mergeSequence<T>(this: Observable<MixedArrayState<T>>, addTrigger: Subject<ArrayAddPayload<T>>, removeTrigger: Subject<ArrayRemovePayload>, create: TransformerCreator): Observable<Reducer<ArrayState<T>>>;
-export default function mergeSequence(this: Observable<MixedObjectState>, addTrigger: Subject<ObjectAddPayload>, removeTrigger: Subject<ObjectRemovePayload>, create: TransformerCreator): Observable<Reducer<ObjectState>>;
+export default function mergeCollection<T>(this: Observable<MixedArrayState<T>>, addTrigger: Subject<ArrayAddPayload<T>>, removeTrigger: Subject<ArrayRemovePayload>, create: TransformerCreator): Observable<Reducer<ArrayState<T>>>;
+export default function mergeCollection(this: Observable<MixedObjectState>, addTrigger: Subject<ObjectAddPayload>, removeTrigger: Subject<ObjectRemovePayload>, create: TransformerCreator): Observable<Reducer<ObjectState>>;
 /* tslint:enable:max-line-length */
 
-export default function mergeSequence(
+export default function mergeCollection(
   this: any,
   addTrigger: any,
   removeTrigger: any,
@@ -32,7 +32,7 @@ export default function mergeSequence(
     this,
     (state: any) => {
       if (!Array.isArray(state) && !isPlainObject(state)) {
-        throw new TypeError('Observable value for "mergeSequence" should be an array or a plain object');
+        throw new TypeError('Observable value for "mergeCollection" should be an array or a plain object');
       }
 
       if (Array.isArray(state)) {

@@ -121,13 +121,13 @@ export interface TransformerCreator {
 }
 ```
 
-If you have an observable sequence to create, use special function `mergeSequence` provided by 
+If you have an observable sequence to create, use special function `mergeCollection` provided by 
 Lazyx.
 
 It can be done in the following way:
 ```typescript
 import {Observable, Subject} from 'rxjs';
-import 'lazyx/es/add/operator/mergeSequence';
+import 'lazyx/es/add/operator/mergeCollection';
 import todo from './todo'; // the function we defined in the previous example
 
 export const addTodo = new Subject();
@@ -135,13 +135,13 @@ export const removeTodo = new Subject();
 
 function todos(state = []) {
   return Observable.of(state)
-    .mergeSequence(addTodo, removeTodo, todo)
+    .mergeCollection(addTodo, removeTodo, todo)
     .apply();
 }
 
 export default todos;
 ```
-Function `mergeSequence` has the following signature:
+Function `mergeCollection` has the following signature:
 ```typescript
 type Reducer<T> = (state: T) => T;
 type TransformerCreator = (state: T) => Observable<T>;
@@ -149,8 +149,8 @@ type TransformerCreator = (state: T) => Observable<T>;
 type ArrayState<T> = Observable<T>[];
 type ObjectState = {[key: string]: Observable<any>};
 
-function mergeSequence<T>(this: Observable<ArrayState<T>>, addTrigger: Subject<T>, removeTrigger: Subject<number>, create: TransformerCreator): Observable<Reducer<ArrayState<T>>>;
-function mergeSequence(this: Observable<ObjectState>, addTrigger: Subject<[string, any]>, removeTrigger: Subject<string>, create: TransformerCreator): Observable<Reducer<ObjectState>>;
+function mergeCollection<T>(this: Observable<ArrayState<T>>, addTrigger: Subject<T>, removeTrigger: Subject<number>, create: TransformerCreator): Observable<Reducer<ArrayState<T>>>;
+function mergeCollection(this: Observable<ObjectState>, addTrigger: Subject<[string, any]>, removeTrigger: Subject<string>, create: TransformerCreator): Observable<Reducer<ObjectState>>;
 ```
 **Note:** if you use observable object, you have to send property key in the addition Trigger. 
 

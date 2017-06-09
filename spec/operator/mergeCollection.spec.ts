@@ -8,10 +8,10 @@ import 'rxjs/add/operator/scan';
 import 'rxjs/add/operator/skip';
 import {Observable} from 'rxjs/Observable';
 import {Subject} from 'rxjs/Subject';
-import '../../src/add/operator/mergeSequence';
+import '../../src/add/operator/mergeCollection';
 import {Reducer} from '../../src/typings';
 
-describe('Operator "mergeSequence"', () => {
+describe('Operator "mergeCollection"', () => {
   let create: jasmine.Spy;
 
   beforeEach(() => {
@@ -24,11 +24,11 @@ describe('Operator "mergeSequence"', () => {
     const removeTrigger = new Subject();
 
     const transformer = (<any>Observable.of(0))
-      .mergeSequence(addTrigger, removeTrigger, create)
+      .mergeCollection(addTrigger, removeTrigger, create)
       .scan((state: number, reducer: Reducer<number>) => reducer(state));
 
     expect(() => transformer.subscribe((x: number) => x))
-      .toThrow(new TypeError('Observable value for "mergeSequence" should be an array or a plain object'));
+      .toThrow(new TypeError('Observable value for "mergeCollection" should be an array or a plain object'));
   });
 
   describe('with array input', () => {
@@ -45,7 +45,7 @@ describe('Operator "mergeSequence"', () => {
 
       beforeEach(() => {
         transformer = Observable.of([])
-          .mergeSequence(addTrigger, removeTrigger, create)
+          .mergeCollection(addTrigger, removeTrigger, create)
           .scan((state: Observable<string>[], reducer) => reducer(state));
       });
 
@@ -79,7 +79,7 @@ describe('Operator "mergeSequence"', () => {
 
       it('should transform initial state to sequence of observables', (done) => {
         Observable.of(['1', '2', '3'])
-          .mergeSequence(addTrigger, removeTrigger, create)
+          .mergeCollection(addTrigger, removeTrigger, create)
           .scan((state: Observable<string>[], reducer) => reducer(state))
           .do((sequence) => {
             expect(sequence).toEqual([jasmine.any(Observable), jasmine.any(Observable), jasmine.any(Observable)]);
@@ -93,7 +93,7 @@ describe('Operator "mergeSequence"', () => {
 
       it('should skip elements of initial state if they are already observables', (done) => {
         Observable.of(['1', Observable.of('2'), '3'])
-          .mergeSequence(addTrigger, removeTrigger, create)
+          .mergeCollection(addTrigger, removeTrigger, create)
           .scan((state: Observable<string>[], reducer) => reducer(state))
           .mergeMap(([one, two, three]) => Observable.combineLatest(one, two, three))
           .subscribe((sequence) => {
@@ -118,7 +118,7 @@ describe('Operator "mergeSequence"', () => {
 
       beforeEach(() => {
         transformer = Observable.of({})
-          .mergeSequence(addTrigger, removeTrigger, create)
+          .mergeCollection(addTrigger, removeTrigger, create)
           .scan((state: { [key: string]: Observable<any> }, reducer) => reducer(state));
       });
 
@@ -152,7 +152,7 @@ describe('Operator "mergeSequence"', () => {
 
       it('should transform initial state to sequence of observables', (done) => {
         Observable.of({a: '1', b: '2', c: '3'})
-          .mergeSequence(addTrigger, removeTrigger, create)
+          .mergeCollection(addTrigger, removeTrigger, create)
           .scan((state: Observable<string>[], reducer) => reducer(state))
           .do((sequence) => {
             expect(sequence).toEqual({
@@ -170,7 +170,7 @@ describe('Operator "mergeSequence"', () => {
 
       it('should skip elements of initial state if they are already observables', (done) => {
         Observable.of({a: '1', b: Observable.of('2'), c: '3'})
-          .mergeSequence(addTrigger, removeTrigger, create)
+          .mergeCollection(addTrigger, removeTrigger, create)
           .scan((state: Observable<string>[], reducer) => reducer(state))
           .do((sequence) => {
             expect(sequence).toEqual({
