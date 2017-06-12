@@ -20,8 +20,8 @@ export default function createStore(transformers: TransformersMap, initialState:
 
 export default function createStore(transformers: any, initialState?: any, middlewares?: any): any {
   if (Array.isArray(initialState) && middlewares === undefined) {
-    middlewares = initialState;
-    initialState = undefined;
+    middlewares = initialState; // tslint:disable-line:no-param-reassign
+    initialState = undefined; // tslint:disable-line:no-param-reassign
   }
 
   const tree = initialize(transformers, initialState, middlewares);
