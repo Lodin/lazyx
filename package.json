@@ -67,7 +67,7 @@
     "rimraf": "^2.6.1",
     "ts-node": "^3.0.4",
     "tslint": "^5.2.0",
-    "tslint-config-poetez": "^0.1.0",
+    "tslint-config-poetez": "^0.1.1",
     "typescript": "^2.3.2",
     "webpack": "^2.5.1"
   },
