@@ -3,6 +3,9 @@ const paths = require('./paths');
 
 const env = process.env.NODE_ENV;
 
+const rxjsAbstraction = /rxjs\/(Observable|Subject)/;
+const rxjsOperator = /^rxjs\/(?:operator|observable)\/(\w*)$/;
+
 module.exports = {
   devtool: 'source-map',
   entry: [
@@ -11,6 +14,10 @@ module.exports = {
   resolve: {
     extensions: ['.js', '.json', '.ts', '.tsx'],
   },
+  externals: [
+    rxjsAbstraction,
+    rxjsOperator,
+  ],
   output: {
     library: 'Lazyx',
     libraryTarget: 'umd',

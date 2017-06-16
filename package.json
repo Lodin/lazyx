@@ -19,9 +19,10 @@
     "build:umd": "npm-run-all --parallel build:umd:regular build:umd:min",
     "build:umd:regular": "cross-env NODE_ENV=development webpack --config=config/webpack.dev.js",
     "build:umd:min": "cross-env NODE_ENV=production webpack --config=config/webpack.prod.js",
-    "build": "npm-run-all --parallel build:commonjs",
+    "build": "npm-run-all --parallel build:commonjs build:umd",
     "make-packages": "node ./config/make-packages.js",
-    "prepublish": "npm-run-all clean lint test:single build make-packages",
+    "patch:umd": "node ./config/patch/patch-umd.js",
+    "prepublish": "npm-run-all clean lint test:single build make-packages patch:umd",
     "precommit": "lint-staged"
   },
   "repository": {
