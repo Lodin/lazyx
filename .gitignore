@@ -8,9 +8,7 @@
 /coverage
 
 # production
-/commonjs
-/es
-/umd
+/dist
 
 # misc
 .DS_Store
