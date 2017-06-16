@@ -1,6 +1,6 @@
 const path = require('path');
 
-const resolve = way => path.resolve(__dirname, '..', way);
+const resolve = relativePath => path.resolve(__dirname, '..', relativePath);
 
 module.exports = {
   build: resolve('./dist/umd'),
